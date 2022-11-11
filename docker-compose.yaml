@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  api-django:
+    image: api-django
+    build:
+      context: .
+      dockerfile: django/Dockerfile
+    env_file: .env
+    volumes: 
+      - .:/app
+    ports:
+      - 5000:5000
+    command: echo "command not specified"
+
+  api-flask:
+    image: api-flask
+    build:
+      context: .
+      dockerfile: flask/Dockerfile
+    env_file: .env
+    volumes: 
+      - .:/app
+    ports:
+      - 5000:5000
+    command: echo "command not specified"
+  
+  api-fastapi:
+    image: api-fastapi
+    build:
+      context: .
+      dockerfile: fastapi/Dockerfile
+    env_file: .env
+    volumes: 
+      - .:/app
+    ports:
+      - 5000:5000
+    command: echo "command not specified"
+  
+  api-graphql:
+    image: api-graphql
+    build:
+      context: .
+      dockerfile: graphql/Dockerfile
+    env_file: .env
+    volumes: 
+      - .:/app
+    ports:
+      - 5000:5000
+    command: echo "command not specified"
