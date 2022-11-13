@@ -1,11 +1,23 @@
 version: "3.9"
 
 services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=defaultdb
+    ports:
+      - 5432:5432
+    volumes: 
+      - pgdata:/var/lib/postgresql/data
+      - ./db/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+
   api-django:
-    image: api-django
+    image: django_api:${VERSION-latest}
     build:
       context: .
-      dockerfile: django/Dockerfile
+      dockerfile: django_api/Dockerfile
     env_file: .env
     volumes: 
       - .:/app
@@ -14,37 +26,41 @@ services:
     command: echo "command not specified"
 
   api-flask:
-    image: api-flask
+    image: flask_api:${VERSION-latest}
     build:
       context: .
-      dockerfile: flask/Dockerfile
+      dockerfile: flask_api/Dockerfile
     env_file: .env
     volumes: 
       - .:/app
     ports:
-      - 5000:5000
+      - 6000:5000
     command: echo "command not specified"
   
   api-fastapi:
-    image: api-fastapi
+    image: fastapi_api:${VERSION-latest}
     build:
       context: .
-      dockerfile: fastapi/Dockerfile
+      dockerfile: fastapi_api/Dockerfile
     env_file: .env
     volumes: 
       - .:/app
     ports:
-      - 5000:5000
+      - 7000:7000
     command: echo "command not specified"
   
   api-graphql:
-    image: api-graphql
+    image: graphql_api:${VERSION-latest}
     build:
       context: .
-      dockerfile: graphql/Dockerfile
+      dockerfile: graphql_api/Dockerfile
     env_file: .env
     volumes: 
       - .:/app
     ports:
-      - 5000:5000
+      - 8000:8000
     command: echo "command not specified"
+
+
+volumes:
+  pgdata:
