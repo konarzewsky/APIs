@@ -13,7 +13,7 @@ services:
       - pgdata:/var/lib/postgresql/data
       - ./db/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
 
-  django-app:
+  django_api:
     image: django_api:${VERSION-latest}
     build:
       context: .
@@ -27,7 +27,7 @@ services:
       - db
     command: echo "command not specified"
 
-  flask-app:
+  flask_api:
     image: flask_api:${VERSION-latest}
     build:
       context: .
@@ -41,7 +41,7 @@ services:
       - db
     command: echo "command not specified"
   
-  fastapi-app:
+  fastapi_api:
     image: fastapi_api:${VERSION-latest}
     build:
       context: .
@@ -55,7 +55,7 @@ services:
       - db
     command: ["uvicorn", "fastapi_api.main:app", "--host", "0.0.0.0", "--port", "7000", "--reload"]
   
-  graphql-app:
+  graphql_api:
     image: graphql_api:${VERSION-latest}
     build:
       context: .
