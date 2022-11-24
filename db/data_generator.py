@@ -2,6 +2,8 @@ import random
 from datetime import date
 
 from faker import Faker
+from fastapi import HTTPException
+from sqlalchemy.exc import SQLAlchemyError
 
 import db.models as models
 
@@ -31,7 +33,7 @@ class DataGenerator:
             self.db.add_all(db_drivers)
             self.db.commit()
         except SQLAlchemyError as e:
-            db.rollback()
+            self.db.rollback()
             raise HTTPException(status_code=400, detail=e)
         else:
             return f"{self.nrows['drivers']} drivers generated"
@@ -53,7 +55,7 @@ class DataGenerator:
             self.db.add_all(db_cars)
             self.db.commit()
         except SQLAlchemyError as e:
-            db.rollback()
+            self.db.rollback()
             raise HTTPException(status_code=400, detail=e)
         else:
             return f"{self.nrows['cars']} cars generated"
@@ -74,7 +76,7 @@ class DataGenerator:
             self.db.add_all(db_tickets)
             self.db.commit()
         except SQLAlchemyError as e:
-            db.rollback()
+            self.db.rollback()
             raise HTTPException(status_code=400, detail=e)
         else:
             return f"{self.nrows['tickets']} tickets generated"
