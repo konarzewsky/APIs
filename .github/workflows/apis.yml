@@ -9,15 +9,18 @@ on:
       - 'APIs/**'
 
 jobs:
-  runs-on: ubuntu-latest
-  strategy:
-    fail-fast: false
-    matrix:
-      appName: ['fastapi_api']
-  
-  steps:
-    - name: Build docker image
-      run: docker-compose build ${{ matrix.appName }
+
+  build_and_test:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        appName: ['fastapi_api']
     
-    - name: Check the code
-      run: docker-compose run ${{ matrix.appName } bash lint.sh
+    steps:
+      - name: Build docker image
+        run: docker-compose build ${{ matrix.appName }
+      
+      - name: Check the code
+        run: docker-compose run ${{ matrix.appName } bash lint.sh
