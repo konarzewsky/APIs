@@ -20,7 +20,7 @@ jobs:
     
     steps:
       - name: Build docker image
-        run: docker-compose build ${{ matrix.appName }
+        run: docker-compose build ${{ matrix.appName }}
       
       - name: Check the code
-        run: docker-compose run ${{ matrix.appName } bash lint.sh
+        run: docker-compose run ${{ matrix.appName }} bash lint.sh
