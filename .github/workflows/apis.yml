@@ -16,6 +16,9 @@ jobs:
         appName: ['fastapi_api']
     
     steps:
+    
+      - uses: actions/checkout@v3
+
       - name: Build docker image
         run: docker-compose build ${{ matrix.appName }}
       
