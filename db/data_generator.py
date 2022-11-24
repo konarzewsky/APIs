@@ -27,9 +27,14 @@ class DataGenerator:
             )
             for _ in range(self.nrows["drivers"])
         ]
-        self.db.add_all(db_drivers)
-        self.db.commit()
-        # self.db.refresh(db_drivers)
+        try:
+            self.db.add_all(db_drivers)
+            self.db.commit()
+        except SQLAlchemyError as e:
+            db.rollback()
+            raise HTTPException(status_code=400, detail=e)
+        else:
+            return f"{self.nrows['drivers']} drivers generated"
 
     def generate_cars(self):
         drivers = [d.id for d in self.db.query(models.Driver).all()]
@@ -44,9 +49,14 @@ class DataGenerator:
             )
             for _ in range(self.nrows["cars"])
         ]
-        self.db.add_all(db_cars)
-        self.db.commit()
-        # self.db.refresh(db_cars)
+        try:
+            self.db.add_all(db_cars)
+            self.db.commit()
+        except SQLAlchemyError as e:
+            db.rollback()
+            raise HTTPException(status_code=400, detail=e)
+        else:
+            return f"{self.nrows['cars']} cars generated"
 
     def generate_tickets(self):
         drivers_cars = [(c.driver.id, c.id) for c in self.db.query(models.Car).all()]
@@ -60,6 +70,11 @@ class DataGenerator:
                 penalty_points=faker.random_int(1, 10),
             )
             db_tickets.append(ticket)
-        self.db.add_all(db_tickets)
-        self.db.commit()
-        # self.db.refresh(db_tickets)
+        try:
+            self.db.add_all(db_tickets)
+            self.db.commit()
+        except SQLAlchemyError as e:
+            db.rollback()
+            raise HTTPException(status_code=400, detail=e)
+        else:
+            return f"{self.nrows['tickets']} tickets generated"

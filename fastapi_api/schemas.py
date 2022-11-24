@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import List
 
 
 class Car(BaseModel):
@@ -27,6 +28,8 @@ class Driver(BaseModel):
     name: str
     surname: str
     age: int
+    car: List[Car]
+    ticket: List[Ticket]
 
     class Config:
         orm_mode = True

@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
 import db.models as models
@@ -12,10 +12,14 @@ def create_driver(db: Session, driver: schemas.Driver):
         surname=driver.surname,
         age=driver.age,
     )
-    db.add(db_driver)
-    db.commit()
-    db.refresh(db_driver)
-    return db_driver
+    try:
+        db.add(db_driver)
+        db.commit()
+    except SQLAlchemyError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=e)
+    else:
+        return db_driver
 
 
 def get_drivers(db: Session, limit: int):
@@ -51,11 +55,15 @@ def create_car(db: Session, car: schemas.Car):
     try:
         db.add(db_car)
         db.commit()
-        db.refresh(db_car)
-        return db_car
     except IntegrityError:
+        db.rollback()
         error_msg = f"There is no driver with id={car.driver_id}"
         raise HTTPException(status_code=400, detail=error_msg)
+    except SQLAlchemyError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=e)
+    else:
+        return db_car
 
 
 def create_ticket(db: Session, ticket: schemas.Ticket):
@@ -68,8 +76,13 @@ def create_ticket(db: Session, ticket: schemas.Ticket):
     try:
         db.add(db_ticket)
         db.commit()
-        db.refresh(db_ticket)
         return db_ticket
     except IntegrityError:
+        db.rollback()
         error_msg = f"There is no driver with id={ticket.driver_id} or car with id={ticket.car_id}"  # noqa: E501
         raise HTTPException(status_code=400, detail=error_msg)
+    except SQLAlchemyError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=e)
+    else:
+        return db_ticket
