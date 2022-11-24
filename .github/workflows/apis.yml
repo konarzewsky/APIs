@@ -16,7 +16,7 @@ jobs:
         appName: ['fastapi_api']
     
     steps:
-    
+
       - uses: actions/checkout@v3
 
       - name: Build docker image
@@ -24,3 +24,9 @@ jobs:
       
       - name: Check the code
         run: docker-compose run ${{ matrix.appName }} bash lint.sh
+
+      - name: Run database for tests
+        run: docker-compose up -d db && sleep 5
+
+      - name: Run tests
+        run: docker-compose run ${{ matrix.appName }} pytest -v ${{ matrix.appName }}/tests/test_api.py
