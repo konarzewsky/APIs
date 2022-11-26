@@ -8,13 +8,16 @@ from fastapi_api.main import app
 client = TestClient(app)
 
 
+headers = {
+    "Auth-Token": API_AUTH_TOKEN,
+    "Content-Type": "application/json",
+}
+
+
 def test_generate_data():
     response = client.post(
         "/generate_data",
-        headers={
-            "Auth-Token": API_AUTH_TOKEN,
-            "Content-Type": "application/json",
-        },
+        headers=headers,
     )
     with db_session.begin() as db:
         drivers = db.query(models.Driver).all()
@@ -30,12 +33,16 @@ def test_create_driver():
     response = client.post(
         "/drivers/",
         json={"name": "driver_name", "surname": "driver_surname", "age": 40},
+        headers=headers,
     )
     driver = response.json()
     assert response.status_code == 200
     assert driver["name"] == "driver_name"
 
-    response = client.get(f"/users/{NEW_DATA_NROWS['drivers']+1}")
+    response = client.get(
+        f"/drivers/{NEW_DATA_NROWS['drivers']+1}",
+        headers=headers,
+    )
     driver = response.json()
     assert response.status_code == 200
     assert driver["name"] == "driver_name"
@@ -53,12 +60,12 @@ def test_create_car():
         "color": "brown",
         "driver_id": NEW_DATA_NROWS["drivers"] + 1,
     }
-    response = client.post("/cars/", json=data)
+    response = client.post("/cars/", json=data, headers=headers)
     car = response.json()
     assert response.status_code == 200
     assert car["brand"] == "car_brand"
 
-    response = client.get(f"/users/{NEW_DATA_NROWS['drivers']+1}")
+    response = client.get(f"/drivers/{NEW_DATA_NROWS['drivers']+1}", headers=headers)
     driver = response.json()
     assert response.status_code == 200
     assert driver["car"] == [data]
@@ -73,14 +80,14 @@ def test_create_car_invalid_driver_id():
         "color": "brown",
         "driver_id": NEW_DATA_NROWS["drivers"] + 2,
     }
-    response = client.post("/cars/", json=data)
+    response = client.post("/cars/", json=data, headers=headers)
     car = response.json()
     assert response.status_code == 400
     assert (
         car["detail"] == f"There is no driver with id = {NEW_DATA_NROWS['drivers']+2}"
     )
 
-    response = client.get(f"/users/{NEW_DATA_NROWS['drivers']+2}")
+    response = client.get(f"/drivers/{NEW_DATA_NROWS['drivers']+2}", headers=headers)
     driver = response.json()
     assert response.status_code == 200
     assert driver == {}
@@ -93,12 +100,12 @@ def test_create_ticket():
         "fine": 500,
         "penalty_points": 6,
     }
-    response = client.post("/tickets/", json=data)
+    response = client.post("/tickets/", json=data, headers=headers)
     ticket = response.json()
     assert response.status_code == 200
     assert ticket["fine"] == 500
 
-    response = client.get(f"/users/{NEW_DATA_NROWS['drivers']+1}")
+    response = client.get(f"/drivers/{NEW_DATA_NROWS['drivers']+1}", headers=headers)
     driver = response.json()
     assert response.status_code == 200
     assert driver["ticket"] == [data]
