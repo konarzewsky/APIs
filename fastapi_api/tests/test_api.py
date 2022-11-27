@@ -35,6 +35,7 @@ def test_create_driver():
         json={"name": "driver_name", "surname": "driver_surname", "age": 40},
         headers=headers,
     )
+    print(response.text)
     driver = response.json()
     assert response.status_code == 200
     assert driver["name"] == "driver_name"
@@ -47,8 +48,6 @@ def test_create_driver():
     assert response.status_code == 200
     assert driver["name"] == "driver_name"
     assert driver["name"] == "driver_surname"
-    assert driver["car"] == []
-    assert driver["ticket"] == []
 
 
 def test_create_car():
@@ -65,10 +64,12 @@ def test_create_car():
     assert response.status_code == 200
     assert car["brand"] == "car_brand"
 
-    response = client.get(f"/drivers/{NEW_DATA_NROWS['drivers']+1}", headers=headers)
-    driver = response.json()
+    response = client.get(
+        f"/drivers/{NEW_DATA_NROWS['drivers']+1}/cars", headers=headers
+    )
+    cars = response.json()
     assert response.status_code == 200
-    assert driver["car"] == [data]
+    assert cars == [data]
 
 
 def test_create_car_invalid_driver_id():
@@ -83,14 +84,14 @@ def test_create_car_invalid_driver_id():
     response = client.post("/cars/", json=data, headers=headers)
     car = response.json()
     assert response.status_code == 400
-    assert (
-        car["detail"] == f"There is no driver with id = {NEW_DATA_NROWS['drivers']+2}"
-    )
+    assert car["detail"] == f"There is no driver with id={NEW_DATA_NROWS['drivers']+2}"
 
-    response = client.get(f"/drivers/{NEW_DATA_NROWS['drivers']+2}", headers=headers)
-    driver = response.json()
+    response = client.get(
+        f"/drivers/{NEW_DATA_NROWS['drivers']+2}/cars", headers=headers
+    )
+    cars = response.json()
     assert response.status_code == 200
-    assert driver == {}
+    assert cars == []
 
 
 def test_create_ticket():
@@ -105,7 +106,9 @@ def test_create_ticket():
     assert response.status_code == 200
     assert ticket["fine"] == 500
 
-    response = client.get(f"/drivers/{NEW_DATA_NROWS['drivers']+1}", headers=headers)
-    driver = response.json()
+    response = client.get(
+        f"/drivers/{NEW_DATA_NROWS['drivers']+1}/tickets", headers=headers
+    )
+    tickets = response.json()
     assert response.status_code == 200
-    assert driver["ticket"] == [data]
+    assert tickets == [data]
