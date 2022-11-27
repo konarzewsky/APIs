@@ -30,7 +30,7 @@ def get_driver(db: Session, driver_id: int):
     db_driver = db.query(models.Driver).filter(models.Driver.id == driver_id).first()
     if db_driver is None:
         raise HTTPException(
-            status_code=404, detail=f"Driver with id={driver_id} not found"
+            status_code=400, detail=f"Driver with id={driver_id} not found"
         )
     return db_driver
 

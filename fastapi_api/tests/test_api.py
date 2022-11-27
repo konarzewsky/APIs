@@ -47,7 +47,7 @@ def test_create_driver():
     driver = response.json()
     assert response.status_code == 200
     assert driver["name"] == "driver_name"
-    assert driver["name"] == "driver_surname"
+    assert driver["surname"] == "driver_surname"
 
 
 def test_create_car():
@@ -90,8 +90,8 @@ def test_create_car_invalid_driver_id():
         f"/drivers/{NEW_DATA_NROWS['drivers']+2}/cars", headers=headers
     )
     cars = response.json()
-    assert response.status_code == 200
-    assert cars == []
+    assert response.status_code == 400
+    assert cars["detail"] == f"Driver with id={NEW_DATA_NROWS['drivers']+2} not found"
 
 
 def test_create_ticket():
