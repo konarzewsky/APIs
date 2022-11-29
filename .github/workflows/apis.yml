@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        appName: ['fastapi_api']
+        appName: ['fastapi_api', 'graphql_api']
     
     steps:
 
