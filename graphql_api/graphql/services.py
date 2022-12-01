@@ -1,8 +1,11 @@
-from sqlalchemy.orm import Session
-from db.data_generator import DataGenerator
+from typing import Literal
+
 from graphql import GraphQLError
-from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
+
 import db.models as models
+from db.data_generator import DataGenerator
 
 
 def generate_data(db: Session, nrows: dict):
@@ -11,20 +14,16 @@ def generate_data(db: Session, nrows: dict):
         data_generator.generate_data()
         return "Data generated"
     except Exception as e:
-        raise GraphQLError
+        raise GraphQLError(f"Error while generating data: {e}")
 
 
-def create_driver(name: str, surname: str, age: int):
-    db_driver = models.Driver(
-        name=driver.name,
-        surname=driver.surname,
-        age=driver.age,
-    )
+def create_object(type: Literal["Driver", "Car", "Ticket"], db: Session, **kwargs):
+    db_object = getattr(models, type)(**kwargs)
     try:
-        db.add(db_driver)
+        db.add(db_object)
         db.commit()
     except SQLAlchemyError as e:
         db.rollback()
-        raise HTTPException(status_code=400, detail=e)
+        raise GraphQLError(f"Error while creating {type}: {e}")
     else:
-        return db_driver
+        return f"{type} created"

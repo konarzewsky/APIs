@@ -1,12 +1,13 @@
-import strawberry
-from typing import Optional
-import db.models as models
 from datetime import datetime
+from typing import Optional
+
+import strawberry
+
+import db.models as models
 
 
 @strawberry.type
 class DriverType:
-    id: strawberry.ID
     name: str
     surname: str
     age: int
@@ -15,29 +16,26 @@ class DriverType:
     @classmethod
     def from_orm(cls, driver: models.Driver):
         return DriverType(
-            id=driver.id,
             name=driver.name,
             surname=driver.surname,
             age=driver.age,
-            created_at = driver.created_at
+            created_at=driver.created_at,
         )
 
 
 @strawberry.type
 class CarType:
-    id: strawberry.ID
     brand: str
     model: str
     year_of_production: int
     mileage: int
     color: str
-    driver: Driver
+    driver: DriverType
     created_at: datetime
-    
+
     @classmethod
     def from_orm(cls, car: models.Car):
         return CarType(
-            id=car.id,
             brand=car.brand,
             model=car.model,
             year_of_production=car.year_of_production,
@@ -50,16 +48,14 @@ class CarType:
 
 @strawberry.type
 class TicketType:
-    id: strawberry.ID
-    driver: Driver
-    car: Car
+    driver: DriverType
+    car: CarType
     fine: Optional[int]
     penalty_points: Optional[int]
 
     @classmethod
     def from_orm(cls, ticket: models.Ticket):
         return TicketType(
-            id=ticket.id,
             driver=ticket.driver,
             car=ticket.car,
             fine=ticket.fine,
