@@ -23,7 +23,7 @@ jobs:
         run: docker-compose build ${{ matrix.appName }}
       
       - name: Check the code
-        run: docker-compose run ${{ matrix.appName }} bash lint.sh
+        run: docker-compose run ${{ matrix.appName }} bash lint.sh ${{ matrix.appName }}
 
       - name: Run database for tests
         run: docker-compose up -d db && sleep 5
