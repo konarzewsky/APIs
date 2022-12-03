@@ -1,7 +1,7 @@
 from typing import List, Literal, Optional, Union
 
 from graphql import GraphQLError
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
 import db.models as models
@@ -24,6 +24,13 @@ def create_object(
     try:
         db.add(db_object)
         db.commit()
+    except IntegrityError as e:
+        db.rollback()
+        if type == "Car":
+            e = f"There is no driver with id={kwargs.get('driver_id')}"
+        elif type == "Ticket":
+            e = f"There is no driver with id={kwargs.get('driver_id')} or car with id={kwargs.get('car_id')}"  # noqa: E501
+        raise GraphQLError(f"Error while creating {type}: {e}")
     except SQLAlchemyError as e:
         db.rollback()
         raise GraphQLError(f"Error while creating {type}: {e}")
@@ -38,8 +45,11 @@ def get_drivers(db: Session, limit: int = 100):
 def get_object(
     db: Session, type: Literal["Driver", "Car", "Ticket"], driver_id: int
 ) -> Union[Optional[models.Driver], List[models.Car], List[models.Ticket]]:
+    driver = db.query(models.Driver).filter(models.Driver.id == driver_id).first()
+    if not driver:
+        raise GraphQLError(f"Driver with id={driver_id} not found")
     if type == "Driver":
-        return db.query(models.Driver).filter(models.Driver.id == driver_id).first()
+        return driver
     else:
         return (
             db.query(getattr(models, type))

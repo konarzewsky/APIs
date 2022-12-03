@@ -29,13 +29,12 @@ def test_generate_data():
     assert len(tickets) == NEW_DATA_NROWS["tickets"]
 
 
-def test_create_driver():
+def test_driver():
     response = client.post(
         "/drivers/",
         json={"name": "driver_name", "surname": "driver_surname", "age": 40},
         headers=headers,
     )
-    print(response.text)
     driver = response.json()
     assert response.status_code == 200
     assert driver["name"] == "driver_name"
@@ -50,7 +49,7 @@ def test_create_driver():
     assert driver["surname"] == "driver_surname"
 
 
-def test_create_car():
+def test_car():
     data = {
         "brand": "car_brand",
         "model": "car_model",
@@ -72,7 +71,7 @@ def test_create_car():
     assert cars == [data]
 
 
-def test_create_car_invalid_driver_id():
+def test_car_invalid_driver_id():
     data = {
         "brand": "car_brand",
         "model": "car_model",
@@ -94,7 +93,7 @@ def test_create_car_invalid_driver_id():
     assert cars["detail"] == f"Driver with id={NEW_DATA_NROWS['drivers']+2} not found"
 
 
-def test_create_ticket():
+def test_ticket():
     data = {
         "driver_id": NEW_DATA_NROWS["drivers"] + 1,
         "car_id": 1,
