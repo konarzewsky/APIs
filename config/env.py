@@ -2,6 +2,7 @@ import os
 
 API_AUTH_TOKEN = os.environ["API_AUTH_TOKEN"]
 LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
+ENVIRONMENT = os.environ.get("ENVIRONMENT", "development")
 
 DB = {
     "DB_HOST": os.environ["DB_HOST"],

@@ -76,7 +76,6 @@ def create_ticket(db: Session, ticket: schemas.Ticket):
     try:
         db.add(db_ticket)
         db.commit()
-        return db_ticket
     except IntegrityError:
         db.rollback()
         error_msg = f"There is no driver with id={ticket.driver_id} or car with id={ticket.car_id}"  # noqa: E501

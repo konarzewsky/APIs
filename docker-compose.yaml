@@ -67,7 +67,7 @@ services:
       - 8000:8000
     depends_on:
       - db
-    command: echo "command not specified"
+    command: ["python", "graphql_api/main.py"]
 
 
 volumes:
