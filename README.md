@@ -10,6 +10,8 @@ The same API created using:
 
 There are 4 services specifies in ```docker-compose.yaml``` (there are 4 associated subfolders named after these services).
 
+Run database ```docker-compose up -d db```
+
 Examples for ```fastapi_api``` service:
 
 &nbsp;

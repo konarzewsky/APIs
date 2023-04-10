@@ -2,7 +2,7 @@
 
 set -xe
 
-for parentdir in graphql_api
+for parentdir in fastapi_api graphql_api
 do
 bin/run $parentdir bash lint.sh $parentdir
 bin/run $parentdir python -m pytest -v $parentdir/tests/.
