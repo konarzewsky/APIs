@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
+from sqlalchemy.sql.expression import func
 
 import db.models as models
 import fastapi_api.schemas as schemas
@@ -23,7 +24,7 @@ def create_driver(db: Session, driver: schemas.Driver):
 
 
 def get_drivers(db: Session, limit: int):
-    return db.query(models.Driver).limit(limit).all()
+    return db.query(models.Driver).order_by(func.random()).limit(limit).all()
 
 
 def get_driver(db: Session, driver_id: int):
