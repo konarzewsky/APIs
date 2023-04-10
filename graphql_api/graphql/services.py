@@ -1,4 +1,4 @@
-from typing import List, Literal, Optional, Union
+from typing import Literal
 
 from graphql import GraphQLError
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
@@ -38,13 +38,13 @@ def create_object(
         return f"{type} created"
 
 
-def get_drivers(db: Session, limit: int = 100):
+def get_drivers(db: Session, limit: int = 100) -> list[models.Driver]:
     return db.query(models.Driver).limit(limit).all()
 
 
 def get_object(
     db: Session, type: Literal["Driver", "Car", "Ticket"], driver_id: int
-) -> Union[Optional[models.Driver], List[models.Car], List[models.Ticket]]:
+) -> models.Driver | list[models.Car] | list[models.Ticket] | None:
     driver = db.query(models.Driver).filter(models.Driver.id == driver_id).first()
     if not driver:
         raise GraphQLError(f"Driver with id={driver_id} not found")

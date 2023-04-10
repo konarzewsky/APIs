@@ -1,5 +1,3 @@
-from typing import List
-
 from fastapi import Depends, FastAPI
 from sqlalchemy.orm import Session
 
@@ -29,7 +27,7 @@ def create_driver(driver: Driver, db: Session = Depends(get_db_conn)):
     return crud.create_driver(db=db, driver=driver)
 
 
-@app.get("/drivers/", response_model=List[Driver])
+@app.get("/drivers/", response_model=list[Driver])
 def get_drivers(limit: int = 100, db: Session = Depends(get_db_conn)):
     return crud.get_drivers(db=db, limit=limit)
 
@@ -39,13 +37,13 @@ def get_driver(driver_id: int, db: Session = Depends(get_db_conn)):
     return crud.get_driver(db=db, driver_id=driver_id)
 
 
-@app.get("/drivers/{driver_id}/cars", response_model=List[Car])
+@app.get("/drivers/{driver_id}/cars", response_model=list[Car])
 def get_driver_cars(driver_id: int, db: Session = Depends(get_db_conn)):
     crud.get_driver(db=db, driver_id=driver_id)
     return crud.get_driver_cars(db=db, driver_id=driver_id)
 
 
-@app.get("/drivers/{driver_id}/tickets", response_model=List[Ticket])
+@app.get("/drivers/{driver_id}/tickets", response_model=list[Ticket])
 def get_driver_tickets(driver_id: int, db: Session = Depends(get_db_conn)):
     crud.get_driver(db=db, driver_id=driver_id)
     return crud.get_driver_tickets(db=db, driver_id=driver_id)
