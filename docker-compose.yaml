@@ -12,40 +12,14 @@ services:
     volumes: 
       - pgdata:/var/lib/postgresql/data
       - ./db/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
-
-  django_api:
-    image: django_api:${VERSION-latest}
-    build:
-      context: .
-      dockerfile: django_api/Dockerfile
-    env_file: .env
-    volumes: 
-      - .:/app
-    ports:
-      - 5000:5000
-    depends_on:
-      - db
-    command: echo "command not specified"
-
-  flask_api:
-    image: flask_api:${VERSION-latest}
-    build:
-      context: .
-      dockerfile: flask_api/Dockerfile
-    env_file: .env
-    volumes: 
-      - .:/app
-    ports:
-      - 6000:6000
-    depends_on:
-      - db
-    command: echo "command not specified"
   
   fastapi_api:
     image: fastapi_api:${VERSION-latest}
     build:
       context: .
-      dockerfile: fastapi_api/Dockerfile
+      dockerfile: Dockerfile
+      args:
+        PROJECT_DIR: fastapi_api
     env_file: .env
     volumes: 
       - .:/app
@@ -59,7 +33,9 @@ services:
     image: graphql_api:${VERSION-latest}
     build:
       context: .
-      dockerfile: graphql_api/Dockerfile
+      dockerfile: Dockerfile
+      args:
+        PROJECT_DIR: graphql_api
     env_file: .env
     volumes: 
       - .:/app
@@ -69,6 +45,37 @@ services:
       - db
     command: ["python", "graphql_api/main.py"]
 
+  django_api:
+    image: django_api:${VERSION-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PROJECT_DIR: django_api
+    env_file: .env
+    volumes: 
+      - .:/app
+    ports:
+      - 5000:5000
+    depends_on:
+      - db
+    command: echo "command not specified"
+
+  flask_api:
+    image: flask_api:${VERSION-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PROJECT_DIR: flask_api
+    env_file: .env
+    volumes: 
+      - .:/app
+    ports:
+      - 6000:6000
+    depends_on:
+      - db
+    command: echo "command not specified"
 
 volumes:
   pgdata:
